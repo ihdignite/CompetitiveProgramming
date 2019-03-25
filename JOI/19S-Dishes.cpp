@@ -6,7 +6,7 @@ using namespace std;
 const int mxN=1e6;
 int n, m, p[mxN], q[mxN];
 ll a[mxN+1], b[mxN+1], s[mxN], t[mxN], ans, lz[1<<21];
-vector<array<ll, 2>> e[mxN+1];
+vector<array<ll, 3>> e;
 array<ll, 2> st[1<<21];
 
 void app(int i, ll x) {
@@ -70,26 +70,23 @@ int main() {
 		cin >> a[i+1] >> s[i] >> p[i], a[i+1]+=a[i];
 	for(int i=0; i<m; ++i) {
 		cin >> b[i+1] >> t[i] >> q[i], b[i+1]+=b[i];
-		ans+=q[i];
-		e[upper_bound(a, a+n+1, t[i]-b[i+1])-a].push_back({i, -q[i]});
+		e.push_back({upper_bound(a, a+n+1, t[i]-b[i+1])-a, -i, -q[i]});
+		if(e.back()[0])
+			ans+=q[i];
+		else
+			e.pop_back();
 	}
-	memset(st, 0xfe, sizeof(st));
-	upd2(0, 0, 0);
-	e[0].push_back({0, 0});
-	for(int i=0; i<=n; ++i) {
-		if(i) {
-			int j=upper_bound(b, b+m+1, s[i-1]-a[i])-b;
-			if(j)
-				e[i].push_back({j-1, p[i-1]});
-		}
-		sort(e[i].begin(), e[i].end());
-		if(!e[i].size()||e[i].back()[0]^m)
-			e[i].push_back({m, 0});
-		for(int j=0; j<e[i].size(); ++j) {
-			upd1(0, e[i][j][0], e[i][j][1]);
-			if(j+1<e[i].size())
-				upd2(e[i][j][0], e[i][j+1][0], qry(e[i][j][0]));
-		}
+	for(int i=0; i<n; ++i) {
+		int j=upper_bound(b, b+m+1, s[i]-a[i+1])-b;
+		if(j)
+			e.push_back({i+1, -j+1, p[i]});
+	}
+	sort(e.begin(), e.end());
+	for(array<ll, 3> f : e) {
+		if(f[0]>n)
+			break;
+		upd1(0, -f[1], f[2]);
+		upd2(-f[1], m, qry(-f[1]));
 	}
 	cout << ans+qry(m);
 }
