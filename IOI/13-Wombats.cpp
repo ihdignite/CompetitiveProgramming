@@ -1,3 +1,18 @@
+/*
+	- Simple solution: we can use a segment tree
+		- Each segment stores a[i][j] = min cost from top row column i to bottom row column j
+	- 2 problems
+		- Merging 2 segments naively is O(c^3)
+			- We can prove that after fixing i, the column of the midpoint is increasing with respect to j
+			- For each i, run divide and conquer
+			- O(c^2logc) for merging
+		- 2*r*c*c ints uses too much memory
+			- Divide the rows into blocks of 20
+			- Build the segment tree on those blocks
+			- Do brute force within each block
+			- Also improves runtime
+*/
+
 #include "wombats.h"
 #include <bits/stdc++.h>
 using namespace std;
