@@ -16,7 +16,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-const int r=5e3, c=200, bs=20, bc=r/bs, sts=512;
+const int r=5e3, c=200, bs=10, bc=r/bs, sts=1024;
 int h[r][c-1], v[r][c], st[sts][c][c], o[c][c];
 
 void upd(int l1, int r1, int i=1, int l2=0, int r2=bc-1) {
