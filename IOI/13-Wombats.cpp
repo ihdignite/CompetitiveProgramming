@@ -4,8 +4,7 @@
 	- 2 problems
 		- Merging 2 segments naively is O(c^3)
 			- We can prove that after fixing i, the column of the midpoint is increasing with respect to j
-			- For each i, run divide and conquer
-			- O(c^2logc) for merging
+			- Knuth's optimization, O(c^2) for merging
 		- 2*r*c*c ints uses too much memory
 			- Divide the rows into blocks of 20
 			- Build the segment tree on those blocks
@@ -18,21 +17,7 @@
 using namespace std;
 
 const int r=5e3, c=200, bs=20, bc=r/bs, sts=512;
-int h[r][c-1], v[r][c], st[sts][c][c];
-
-void solve(int a[c], int (*b)[c], int d[c], int l1=0, int r1=c-1, int l2=0, int r2=c-1) {
-	if(l1>r1)
-		return;
-	int m1=(l1+r1)/2, m2=r2;
-	for(int i=l2; i<=r2; ++i) {
-		if(a[i]+b[i][m1]<=d[m1]) {
-			d[m1]=a[i]+b[i][m1];
-			m2=i;
-		}
-	}
-	solve(a, b, d, l1, m1-1, l2, m2);
-	solve(a, b, d, m1+1, r1, m2, r2);
-}
+int h[r][c-1], v[r][c], st[sts][c][c], o[c][c];
 
 void upd(int l1, int r1, int i=1, int l2=0, int r2=bc-1) {
 	if(l2==r2) {
@@ -56,8 +41,25 @@ void upd(int l1, int r1, int i=1, int l2=0, int r2=bc-1) {
 	if(m2<r1)
 		upd(l1, r1, 2*i+1, m2+1, r2);
 	memset(st[i], 0x3f, sizeof(st[i]));
-	for(int j=0; j<c; ++j)
-		solve(st[2*i][j], st[2*i+1], st[i][j]);
+	for(int j1=0; j1<c; ++j1) {
+		array<int, 2> d{INT_MAX, 0};
+		for(int k=0; k<c; ++k)
+			d=min(array<int, 2>{st[2*i][j1][k]+st[2*i+1][k][j1], -k}, d);
+		st[i][j1][j1]=d[0];
+		o[j1][j1]=-d[1];
+		for(int j2=j1-1; ~j2; --j2) {
+			d={INT_MAX, 0};
+			for(int k=o[j1-1][j2]; k<=o[j1][j2+1]; ++k)
+				d=min(array<int, 2>{st[2*i][j1][k]+st[2*i+1][k][j2], -k}, d);
+			st[i][j1][j2]=d[0];
+			o[j1][j2]=-d[1];
+			d={INT_MAX, 0};
+			for(int k=o[j2][j1-1]; k<=o[j2+1][j1]; ++k)
+				d=min(array<int, 2>{st[2*i][j2][k]+st[2*i+1][k][j1], -k}, d);
+			st[i][j2][j1]=d[0];
+			o[j2][j1]=-d[1];
+		}
+	}
 }
 
 void init(int r, int c, int h[5000][200], int v[5000][200]) {
