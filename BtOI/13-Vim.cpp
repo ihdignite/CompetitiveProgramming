@@ -6,6 +6,7 @@
 			- Cursor before i before the last operation
 		- Cursor on i if j=s[i] and after i otherwise
 	- dp2[i][j][k]
+		- Visited all underlined before i
 		- Operation fj to land on or after i, press h's to go before i, and operation fk to land on or after i
 		- Note that the contribution of the h's is only properly added when j=t[i]
 			- So dp1 only uses dp2[i][t[i]]
