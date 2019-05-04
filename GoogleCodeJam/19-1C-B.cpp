@@ -2,11 +2,14 @@
 using namespace std;
 
 int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	
 	int t, f;
 	cin >> t >> f;
 	for(string ans, ve; t--; ) {
 		vector<int> v(119);
-	    iota(v.begin(), v.end(), 0);
+		iota(v.begin(), v.end(), 0);
 		bool u[5]={};
 		for(int i=0; i<5; ++i) {
 			vector<int> w[5];
