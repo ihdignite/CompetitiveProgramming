@@ -1,7 +1,4 @@
-//ihdignite
-
 #include <bits/stdc++.h>
-
 using namespace std;
 
 const int mxN=1e3, di[4]={1, 0, -1, 0}, dj[4]={0, 1, 0, -1};
